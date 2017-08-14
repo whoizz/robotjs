@@ -19,6 +19,7 @@ using namespace v8;
 //Global delays.
 int mouseDelay = 10;
 int keyboardDelay = 10;
+bool mouseAbsolute = true;
 
 /*
  __  __
@@ -99,7 +100,7 @@ NAN_METHOD(moveMouse)
 
 	MMPoint point;
 	point = MMPointMake(x, y);
-	moveMouse(point);
+	moveMouse(point, mouseAbsolute);
 	microsleep(mouseDelay);
 
 	info.GetReturnValue().Set(Nan::New(1));
@@ -237,6 +238,18 @@ NAN_METHOD(setMouseDelay)
 	}
 
 	mouseDelay = info[0]->Int32Value();
+
+	info.GetReturnValue().Set(Nan::New(1));
+}
+
+NAN_METHOD(setMouseAbsolute)
+{
+	if (info.Length() != 1)
+	{
+		return Nan::ThrowError("Invalid number of arguments.");
+	}
+
+	mouseAbsolute = info[0]->BooleanValue();
 
 	info.GetReturnValue().Set(Nan::New(1));
 }
@@ -837,6 +850,9 @@ NAN_MODULE_INIT(InitAll)
 
 	Nan::Set(target, Nan::New("setMouseDelay").ToLocalChecked(),
 		Nan::GetFunction(Nan::New<FunctionTemplate>(setMouseDelay)).ToLocalChecked());
+
+	Nan::Set(target, Nan::New("setMouseDelay").ToLocalChecked(),
+		Nan::GetFunction(Nan::New<FunctionTemplate>(setMouseAbsolute)).ToLocalChecked());
 
 	Nan::Set(target, Nan::New("keyTap").ToLocalChecked(),
 		Nan::GetFunction(Nan::New<FunctionTemplate>(keyTap)).ToLocalChecked());
